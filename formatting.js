@@ -1,4 +1,11 @@
-(function() {
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    mod(require("codemirror/lib/codemirror"));
+  else if (typeof define == "function" && define.amd) // AMD
+    define(["codemirror/lib/codemirror"], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
 
   CodeMirror.extendMode("css", {
     commentStart: "/*",
@@ -51,11 +58,11 @@
         var endIndex = selText.lastIndexOf(curMode.commentEnd);
         if (startIndex > -1 && endIndex > -1 && endIndex > startIndex) {
           // Take string till comment start
-          selText = selText.substr(0, startIndex)
+          selText = selText.substr(0, startIndex) +
           // From comment start till comment end
-            + selText.substring(startIndex + curMode.commentStart.length, endIndex)
+             selText.substring(startIndex + curMode.commentStart.length, endIndex) +
           // From comment end till string end
-            + selText.substr(endIndex + curMode.commentEnd.length);
+             selText.substr(endIndex + curMode.commentEnd.length);
         }
         cm.replaceRange(selText, from, to);
       }
@@ -79,7 +86,7 @@
     var state = CodeMirror.copyState(outer, cm.getTokenAt(from).state);
     var tabSize = cm.getOption("tabSize");
 
-    var out = "", lines = 0, atSol = from.ch == 0;
+    var out = "", lines = 0, atSol = from.ch === 0;
     function newline() {
       out += "\n";
       atSol = true;
@@ -111,4 +118,4 @@
       cm.setSelection(from, cm.getCursor(false));
     });
   });
-})();
+});
